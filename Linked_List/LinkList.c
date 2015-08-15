@@ -8,31 +8,39 @@
  *
  * Date: 	August 28 2014
  *
- * Methods:   	append()
- *		insertNode()
- *		deleteNode()
- *		printList()
- *		listInit()
+ * Methods:   	AppendToHead()
+ *		InsertNode()
+ *		DeleteNode()
+ *		PrintLinkedList()
+ *		LinkedListInit()
+ *		ReverseLinkedListIteration()
+ *		ReverseLinkedListRecursion()
+ * 		ReversePrintLinkedListRecursion()
  *   		main()
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
 #define true 1
+
+//The node structure
 typedef struct Node
 {
 	int data;
 	struct Node * next;
 }Node;
 
-void append(Node ** head, int data){
+//Append a node to the head of the linked list
+void AppendNodetoHead(Node ** head, int data){
 	
 	Node * tmp = (Node*)malloc(sizeof(Node));
 	tmp->data = data;
 	tmp->next = (*head);
 	(*head) = tmp;
 }
-void insertNode(Node** head, int data, int position)
+
+//Insert a node to any postion of the linked list
+void InsertNode(Node** head, int data, int position)
 {
 	if(position <= 0)
 	{
@@ -61,7 +69,9 @@ void insertNode(Node** head, int data, int position)
 		cur->next = tmp;
 	}
 }
-void deleteNode(Node ** head, int position)
+
+//Delete a node of the linked list
+void DeleteNode(Node ** head, int position)
 {
 	if((*head) == NULL)
 	{
@@ -98,10 +108,44 @@ void deleteNode(Node ** head, int position)
 	free(cur);
 
 }
-void printList(Node ** head){
+
+//Reverse Linked List using iterative method
+void ReverseLinkedListIteration(Node ** head)
+{
+	Node * pre, * cur, * next;
+	cur = (*head);
+	pre = NULL;
+	next = cur->next;
+	while(cur->next != NULL)
+	{
+		cur->next = pre;
+		pre = cur;
+		cur = next;
+		next = cur->next;
+	}
+	cur->next = pre;
+	(*head) = cur;
+}
+//Reverse Linked List using recursive method
+Node * ReverseLinkedListRecursion(Node * head)
+{
+	if(head->next == NULL)
+		return head;
+	
+	Node * newHead = ReverseLinkedListRecursion(head->next);
+
+	head->next->next = head;
+
+	head->next = NULL;
+
+	return newHead;
+
+}
+//Print all the node of the linked list 
+void PrintLinkedList(Node ** head){
 	
 	Node * tmp = (*head);
-	printf("List is:");
+	printf("Linked List:");
 	while(tmp != NULL)
 	{
 		printf("%d->", tmp->data);
@@ -109,8 +153,19 @@ void printList(Node ** head){
 	}
 	printf("end\n");
 }
-
-Node * listInit()
+//Reservely print the linked list 
+void ReversePrintLinkedListRecursion(Node * head)
+{
+	if(head == NULL)
+	{
+		printf("Linked List: end<-");
+		return;
+	}
+	ReversePrintLinkedListRecursion(head->next);
+	printf("%d<-", head->data);
+}
+//Initialize a empty linked list with only a null node
+Node * LinkedListInit()
 {
 	Node * head = NULL;
 	return head;
@@ -119,7 +174,7 @@ Node * listInit()
 
 void main()
 {
-	Node * head = listInit();
+	Node * head = LinkedListInit();
 	printf("How many numbers? \n");
 	int i, n, data, position;
 	scanf("%d", &n);
@@ -127,14 +182,15 @@ void main()
 	{
 		printf("Enter the insert data \n");
 		scanf("%d", &data);
-		append(&head, data);
-		printList(&head);
+		AppendNodetoHead(&head, data);
+		PrintLinkedList(&head);
 	}
 	char operation;
 
 	while(true)
 	{
-		printf("What do you want to do? \n(Insert:i|Delete:d|Quit:q) ");
+		printf("------------------------------------\n");
+		printf("What do you want to do? \n(Insert:i|Delete:d|Quit:q|Iterative_Reverse:r\nRecursive_Reverse:c|Reserve_Print:p) ");
 		
 		scanf(" %c", &operation);
 
@@ -145,15 +201,27 @@ void main()
 				scanf("%d", &position);
 				printf("Enter the insert data ");
 				scanf("%d", &data);
-				insertNode(&head, data, position);
-				printList(&head);
+				InsertNode(&head, data, position);
+				PrintLinkedList(&head);
 			break;
 			case 'd':
 				printf("Enter the delete position ");
 				scanf("%d", &position);
-				deleteNode(&head, position);
-				printList(&head);
-			break;		
+				DeleteNode(&head, position);
+				PrintLinkedList(&head);
+			break;	
+			case 'r':
+				ReverseLinkedListIteration(&head);
+				PrintLinkedList(&head);
+			break;
+			case 'c':
+				head = ReverseLinkedListRecursion(head);
+				PrintLinkedList(&head);
+			break;
+			case 'p':
+				ReversePrintLinkedListRecursion(head);
+				printf("\n");
+			break;
 			case 'q':
 				return;
 			break;
